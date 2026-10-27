@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purpou Gravações</title>
+    <style>
+        body { background: #0d021a; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
+        h1 { color: #8c26d9; }
+        #status { background: #1a0533; padding: 15px; border-radius: 8px; border: 1px solid #8c26d9; margin-bottom: 20px; }
+        #galeria { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        img { max-width: 100%; border: 2px solid #8c26d9; border-radius: 5px; box-shadow: 0 0 10px #8c26d9; }
+    </style>
+</head>
+<body>
+    <h1>GRAVAÇÕES PURPOU</h1>
+    <div id="status">Aguardando Roblox...</div>
+    <div id="galeria"></div>
+
+    <script>
+        async function puxarFrames() {
+            try {
+                const resposta = await fetch('/api/gravacao');
+                const dados = await resposta.json();
+                
+                if (dados.frames && dados.frames.length > 0) {
+                    document.getElementById('status').innerText = `Fotos Recebidas: ${dados.frames.length}`;
+                    const galeria = document.getElementById('galeria');
+                    galeria.innerHTML = ''; 
+
+                    // Mostra só as últimas 3 fotos pra não travar o Safari do iPhone
+                    dados.frames.slice(-3).forEach(base64 => {
+                        const img = document.createElement('img');
+                        img.src = base64; 
+                        galeria.appendChild(img);
+                    });
+                }
+            } catch (e) {
+                console.error("Erro ao puxar:", e);
+            }
+        }
+
+        setInterval(puxarFrames, 1500);
+    </script>
+</body>
+</html>
